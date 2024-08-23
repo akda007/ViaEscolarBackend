@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model personInfo {
+  id        Int        @id @default(autoincrement())
+  name      String
+  birthdate DateTime
+  RG        String
+  CPF       String
+  Phone     String
+  Address   String
+  children  Children[]
+  employees Employee[]
+  users     Parent[]
+}
+
+model Parent {
+  id           Int            @id @default(autoincrement())
+  infoId       Int
+  mensalidades Mensalidades[]
+  info         personInfo     @relation(fields: [infoId], references: [id])
+}
+
+model Mensalidades {
+  id       Int    @id @default(autoincrement())
+  parentId Int
+  parent   Parent @relation(fields: [parentId], references: [id])
+}
+
+model School {
+  id      Int     @id @default(autoincrement())
+  name    String
+  address String
+  email   String
+  phone   String
+  routes  Route[]
+}
+
+model Employee {
+  id            Int        @id @default(autoincrement())
+  personInfoId  Int
+  admissionDate DateTime
+  position      String
+  Salary        Float
+  personInfo    personInfo @relation(fields: [personInfoId], references: [id])
+}
+
+model Vehicle {
+  id     Int     @id @default(autoincrement())
+  model  String
+  Brand  String
+  Color  String
+  Plate  String
+  Year   Int
+  Seats  Int
+  routes Route[]
+}
+
+model Children {
+  id     Int        @id @default(autoincrement())
+  infoId Int
+  info   personInfo @relation(fields: [infoId], references: [id])
+}
+
+model Route {
+  id        Int     @id @default(autoincrement())
+  schoolId  Int
+  vehicleId Int
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id])
+  school    School  @relation(fields: [schoolId], references: [id])
+}
